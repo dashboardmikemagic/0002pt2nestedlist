@@ -1,23 +1,38 @@
-import logo from './logo.svg';
+
 import './App.css';
+import { useEffect, useState } from "react";
+import NestedListView from './components/NestedListView';
+import BreadcrumbHeader from './components/BreadcrumbHeader';
 
 function App() {
+  const [breadcrumbs,setBreadcrumbs] = useState([])
+
+  const [currentView, setCurrentView] = useState('ROOT')
+
+  const [renderItems, setRenderItems] = useState([])
+
+  const handleSelection = (id) => {
+    setBreadcrumbs([...breadcrumbs, id])
+    setCurrentView(id)
+  }
+
+  const handleGoBack = () =>{
+    let truncatedPath = [...breadcrumbs]
+    truncatedPath.pop()
+    setBreadcrumbs(truncatedPath)
+    setCurrentView(...breadcrumbs.slice(-1))
+  }
+
+  useEffect(() => {
+    setRenderItems(currentView)  
+  }, [currentView])
+  
+  
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <BreadcrumbHeader handleGoBack={handleGoBack} breadcrumbs={breadcrumbs} />
+      <NestedListView handleSelection={handleSelection} renderItems={renderItems} />
+
     </div>
   );
 }
