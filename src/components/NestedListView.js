@@ -1,7 +1,6 @@
 import React from 'react'
-import { useState } from "react";
 
-export default function NestedListView({handleSelection, renderItems}) {
+export default function NestedListView({handleItemClick, renderItems}) {
 
   return (
     <div>

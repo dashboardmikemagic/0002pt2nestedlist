@@ -3,6 +3,7 @@ import './App.css';
 import { useEffect, useState } from "react";
 import NestedListView from './components/NestedListView';
 import BreadcrumbHeader from './components/BreadcrumbHeader';
+import { data } from './data';
 
 function App() {
   const [breadcrumbs,setBreadcrumbs] = useState([])
@@ -11,27 +12,44 @@ function App() {
 
   const [renderItems, setRenderItems] = useState([])
 
-  const handleSelection = (id) => {
+  const handleGoForward = (id) => {
     setBreadcrumbs([...breadcrumbs, id])
     setCurrentView(id)
   }
 
-  const handleGoBack = () =>{
+  const handleGoBack = (id) =>{
     let truncatedPath = [...breadcrumbs]
     truncatedPath.pop()
     setBreadcrumbs(truncatedPath)
-    setCurrentView(...breadcrumbs.slice(-1))
+    setCurrentView(id)
+  }
+
+  const handleItemClick = (id) => {
+    if(id === breadcrumbs[breadcrumbs.length-1]){
+      handleGoBack(id)
+    } else{
+      handleGoForward(id)
+    }
   }
 
   useEffect(() => {
-    setRenderItems(currentView)  
+    let displayItems = findNestedMenu(data, currentView, 'id')
+    setRenderItems(displayItems)
   }, [currentView])
+  
+  const findNestedMenu = (array, menuId, key) => (
+    array.reduce((a, menu) => {
+      if (a) return a;
+      if (menu.id === menuId) return menu.items;
+      if (menu[key]) return findNestedMenu(menu[key], menu, key)
+    }, null)
+  )
   
   
   return (
     <div className="App">
-      <BreadcrumbHeader handleGoBack={handleGoBack} breadcrumbs={breadcrumbs} />
-      <NestedListView handleSelection={handleSelection} renderItems={renderItems} />
+      <BreadcrumbHeader handleItemClick={handleItemClick} breadcrumbs={breadcrumbs} />
+      <NestedListView handleItemClick={handleItemClick} renderItems={renderItems} />
 
     </div>
   );
