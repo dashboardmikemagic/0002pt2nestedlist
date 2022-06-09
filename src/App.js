@@ -33,17 +33,40 @@ function App() {
   }
 
   useEffect(() => {
-    let displayItems = findNestedMenu(data, currentView, 'id')
+    let displayItems = getNestedItems(data, currentView)
     setRenderItems(displayItems)
   }, [currentView])
   
-  const findNestedMenu = (array, menuId, key) => (
-    array.reduce((a, menu) => {
-      if (a) return a;
-      if (menu.id === menuId) return menu.items;
-      if (menu[key]) return findNestedMenu(menu[key], menu, key)
-    }, null)
-  )
+  function getNestedItems(theObject, menuId) {
+    console.log(`Target Menu Id: ${menuId}`)
+      var result = null;
+      if(theObject instanceof Array) {
+          for(var i = 0; i < theObject.length; i++) {
+              result = getNestedItems(theObject[i],menuId);
+              if (result) {
+                  break;
+              }   
+          }
+      }
+      else
+      {
+          for(var prop in theObject) {
+              //console.log(prop + ': ' + theObject[prop]);
+              if(prop === 'id') {
+                  if(theObject[prop] === menuId) {
+                      return theObject['items'];
+                  }
+              }
+              if(theObject[prop] instanceof Object || theObject[prop] instanceof Array) {
+                  result = getNestedItems(theObject[prop],menuId);
+                  if (result) {
+                      break;
+                  }
+              } 
+          }
+      }
+      return result;
+  }
   
   
   return (
