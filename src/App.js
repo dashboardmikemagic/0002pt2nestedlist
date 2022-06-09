@@ -8,9 +8,9 @@ import { data } from './data';
 function App() {
   const [breadcrumbs,setBreadcrumbs] = useState([])
 
-  const [currentView, setCurrentView] = useState('ROOT')
+  const [currentView, setCurrentView] = useState('home')
 
-  const [renderItems, setRenderItems] = useState([])
+  const [renderItems, setRenderItems] = useState(getNestedItems(data,'home'))
 
   const handleGoForward = (id) => {
     setBreadcrumbs([...breadcrumbs, id])
@@ -24,16 +24,19 @@ function App() {
     setCurrentView(id)
   }
 
-  const handleItemClick = (id) => {
-    if(id === breadcrumbs[breadcrumbs.length-1]){
-      handleGoBack(id)
+  const handleItemClick = (event) => {
+    console.log('Handle Triggered')
+    console.log(`event: ${event.target.id}`)
+    if(event.target.clicktype === 'backwards'){
+      handleGoBack(event.target.id)
     } else{
-      handleGoForward(id)
+      handleGoForward(event.target.id)
     }
   }
 
   useEffect(() => {
     let displayItems = getNestedItems(data, currentView)
+    console.log(`displayItems: ${displayItems}`)
     setRenderItems(displayItems)
   }, [currentView])
   
@@ -51,7 +54,6 @@ function App() {
       else
       {
           for(var prop in theObject) {
-              //console.log(prop + ': ' + theObject[prop]);
               if(prop === 'id') {
                   if(theObject[prop] === menuId) {
                       return theObject['items'];
@@ -73,7 +75,7 @@ function App() {
     <div className="App">
       <BreadcrumbHeader handleItemClick={handleItemClick} breadcrumbs={breadcrumbs} />
       <NestedListView handleItemClick={handleItemClick} renderItems={renderItems} />
-
+      
     </div>
   );
 }
