@@ -6,7 +6,7 @@ import BreadcrumbHeader from './components/BreadcrumbHeader';
 import { data } from './data';
 
 function App() {
-  const [breadcrumbs,setBreadcrumbs] = useState([])
+  const [breadcrumbs,setBreadcrumbs] = useState(['home'])
 
   const [currentView, setCurrentView] = useState('home')
 
@@ -18,6 +18,7 @@ function App() {
   }
 
   const handleGoBack = (id) =>{
+    console.log(`backid: ${id}`)
     let truncatedPath = [...breadcrumbs]
     truncatedPath.pop()
     setBreadcrumbs(truncatedPath)
@@ -27,7 +28,8 @@ function App() {
   const handleItemClick = (event) => {
     console.log('Handle Triggered')
     console.log(`event: ${event.target.id}`)
-    if(event.target.clicktype === 'backwards'){
+    console.log(`clicktype: ${event.target.className}`)
+    if(event.target.className === 'backwards-button'){
       handleGoBack(event.target.id)
     } else{
       handleGoForward(event.target.id)
